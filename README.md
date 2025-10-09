@@ -1,11 +1,15 @@
-<div align="center">
+# Kas Ciraya - Personal Finance Manager
 
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
+This is a frontend prototype for a personal finance management application built with React.
 
-  <h1>Built with AI Studio</h2>
+## Features
 
-  <p>The fastest path from prompt to production with Gemini.</p>
+- User Login (Admin/Viewer roles)
+- Financial Dashboard with charts
+- Transaction Tracking with filtering
+- Add new transactions (Admin only)
+- View transaction receipts
 
-  <a href="https://aistudio.google.com/apps">Start building</a>
+## How to Run
 
-</div>
+This project is set up to run directly in a modern web browser that supports ES modules and import maps. No build step is required. You can serve the files using a simple local server.
