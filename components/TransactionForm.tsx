@@ -1,8 +1,8 @@
 
 import React, { useState } from 'react';
-import { useAppContext } from '../context/AppContext';
-import { CategoryType } from '../types';
-import Icon from './ui/Icon';
+import { useAppContext } from '../context/AppContext.tsx';
+import { CategoryType } from '../types.ts';
+import Icon from './ui/Icon.tsx';
 
 interface TransactionFormProps {
     onClose: () => void;

@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, ReactNode, useCallback, useMemo } from 'react';
-import { User, Role, Wallet, Category, Transaction, CategoryType, UserWalletPermission } from '../types';
+import { User, Role, Wallet, Category, Transaction, CategoryType, UserWalletPermission } from '../types.ts';
 
 // --- MOCK DATA ---
 

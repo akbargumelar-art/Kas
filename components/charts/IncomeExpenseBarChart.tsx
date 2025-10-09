@@ -1,8 +1,8 @@
 
 import React from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import { useAppContext } from '../../context/AppContext';
-import { CategoryType, Transaction } from '../../types';
+import { useAppContext } from '../../context/AppContext.tsx';
+import { CategoryType, Transaction } from '../../types.ts';
 
 const IncomeExpenseBarChart: React.FC = () => {
     const { transactions } = useAppContext();

@@ -1,8 +1,8 @@
 import React, { useState, useMemo } from 'react';
-import { useAppContext } from '../context/AppContext';
-import { Role, Transaction, CategoryType } from '../types';
-import TransactionForm from './TransactionForm';
-import Icon from './ui/Icon';
+import { useAppContext } from '../context/AppContext.tsx';
+import { Role, Transaction, CategoryType } from '../types.ts';
+import TransactionForm from './TransactionForm.tsx';
+import Icon from './ui/Icon.tsx';
 
 const ReceiptViewerModal: React.FC<{ imageUrl: string; onClose: () => void }> = ({ imageUrl, onClose }) => (
     <div className="fixed inset-0 bg-black bg-opacity-75 flex justify-center items-center z-50" onClick={onClose}>

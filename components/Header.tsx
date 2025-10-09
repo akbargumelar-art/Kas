@@ -1,7 +1,7 @@
 
 import React from 'react';
-import { useAppContext } from '../context/AppContext';
-import Icon from './ui/Icon';
+import { useAppContext } from '../context/AppContext.tsx';
+import Icon from './ui/Icon.tsx';
 
 interface HeaderProps {
     onMenuClick: () => void;

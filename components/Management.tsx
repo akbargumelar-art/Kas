@@ -1,6 +1,6 @@
 
 import React from 'react';
-import Icon from './ui/Icon';
+import Icon from './ui/Icon.tsx';
 
 const Management: React.FC = () => {
     // In a real application, this would be a real, secure endpoint.

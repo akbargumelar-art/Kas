@@ -1,7 +1,7 @@
 import React from 'react';
-import { useAppContext } from '../context/AppContext';
-import { Role } from '../types';
-import Icon from './ui/Icon';
+import { useAppContext } from '../context/AppContext.tsx';
+import { Role } from '../types.ts';
+import Icon from './ui/Icon.tsx';
 
 interface SidebarProps {
     isOpen: boolean;

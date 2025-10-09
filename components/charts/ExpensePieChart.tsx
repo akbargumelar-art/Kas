@@ -1,8 +1,8 @@
 
 import React from 'react';
 import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import { useAppContext } from '../../context/AppContext';
-import { CategoryType, Transaction, Category } from '../../types';
+import { useAppContext } from '../../context/AppContext.tsx';
+import { CategoryType, Transaction, Category } from '../../types.ts';
 
 const COLORS = ['#0ea5e9', '#f97316', '#eab308', '#8b5cf6', '#d946ef', '#14b8a6'];
 

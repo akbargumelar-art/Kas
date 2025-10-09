@@ -1,11 +1,11 @@
 
 import React from 'react';
-import { AppProvider, useAppContext } from './context/AppContext';
-import Login from './components/Login';
-import Layout from './components/Layout';
-import Dashboard from './components/Dashboard';
-import Transactions from './components/Transactions';
-import Management from './components/Management';
+import { AppProvider, useAppContext } from './context/AppContext.tsx';
+import Login from './components/Login.tsx';
+import Layout from './components/Layout.tsx';
+import Dashboard from './components/Dashboard.tsx';
+import Transactions from './components/Transactions.tsx';
+import Management from './components/Management.tsx';
 
 const AppContent: React.FC = () => {
     const { currentUser, activeView } = useAppContext();

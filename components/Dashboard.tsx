@@ -1,10 +1,10 @@
 
 import React, { useMemo } from 'react';
-import { useAppContext } from '../context/AppContext';
-import { CategoryType } from '../types';
-import IncomeExpenseBarChart from './charts/IncomeExpenseBarChart';
-import ExpensePieChart from './charts/ExpensePieChart';
-import Icon from './ui/Icon';
+import { useAppContext } from '../context/AppContext.tsx';
+import { CategoryType } from '../types.ts';
+import IncomeExpenseBarChart from './charts/IncomeExpenseBarChart.tsx';
+import ExpensePieChart from './charts/ExpensePieChart.tsx';
+import Icon from './ui/Icon.tsx';
 
 const Dashboard: React.FC = () => {
     const { wallets, transactions, calculateWalletBalance } = useAppContext();
