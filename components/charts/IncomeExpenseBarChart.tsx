@@ -1,12 +1,14 @@
 
 import React from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import { useAppContext } from '../../context/AppContext.tsx';
 import { CategoryType, Transaction } from '../../types.ts';
 
-const IncomeExpenseBarChart: React.FC = () => {
-    const { transactions } = useAppContext();
+interface ChartProps {
+    transactions: Transaction[];
+}
 
+const IncomeExpenseBarChart: React.FC<ChartProps> = ({ transactions }) => {
+    
     const processData = (transactions: Transaction[]) => {
         const dataByMonth: { [key: string]: { name: string; income: number; expense: number } } = {};
 
@@ -23,10 +25,14 @@ const IncomeExpenseBarChart: React.FC = () => {
             }
         });
 
-        return Object.values(dataByMonth).sort((a, b) => new Date(a.name).getTime() - new Date(b.name).getTime());
+        return Object.values(dataByMonth).sort((a, b) => new Date(`1 ${a.name}`).getTime() - new Date(`1 ${b.name}`).getTime());
     };
 
     const data = processData(transactions);
+
+    if (data.length === 0) {
+        return <div className="flex items-center justify-center h-full text-gray-500">No data for this period.</div>;
+    }
 
     return (
         <ResponsiveContainer width="100%" height="100%">
@@ -34,7 +40,7 @@ const IncomeExpenseBarChart: React.FC = () => {
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="name" />
                 <YAxis tickFormatter={(value) => new Intl.NumberFormat('id-ID', { notation: 'compact' }).format(value as number)} />
-                <Tooltip formatter={(value) => new Intl.NumberFormat('id-ID').format(value as number)} />
+                <Tooltip formatter={(value) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(value as number)} />
                 <Legend />
                 <Bar dataKey="income" fill="#22c55e" name="Income" />
                 <Bar dataKey="expense" fill="#ef4444" name="Expense" />

@@ -9,9 +9,9 @@ const MOCK_USERS: User[] = [
 ];
 
 const MOCK_WALLETS: Wallet[] = [
-    { id: 1, name: 'Cash', initialBalance: 500000 },
-    { id: 2, name: 'Bank Mandiri', initialBalance: 5000000 },
-    { id: 3, name: 'GoPay', initialBalance: 250000 },
+    { id: 1, name: 'Cash', icon: 'Wallet', initialBalance: 500000 },
+    { id: 2, name: 'Bank Mandiri', icon: 'Landmark', initialBalance: 5000000 },
+    { id: 3, name: 'GoPay', icon: 'Smartphone', initialBalance: 250000 },
 ];
 
 const MOCK_CATEGORIES: Category[] = [
@@ -64,6 +64,7 @@ interface AppContextType {
     addCategory: (category: Omit<Category, 'id'>) => void;
     updateCategory: (category: Category) => void;
     deleteCategory: (categoryId: number) => void;
+    updateUserPermissions: (userId: number, walletIds: number[]) => void;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -123,7 +124,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
 
     // Wallet Management
     const addWallet = (walletData: Omit<Wallet, 'id'>) => {
-        const newWallet: Wallet = { ...walletData, id: Date.now() };
+        const newWallet: Wallet = { ...walletData, icon: 'Wallet', id: Date.now() };
         setWallets(prev => [...prev, newWallet]);
     };
     const updateWallet = (updatedWallet: Wallet) => setWallets(prev => prev.map(w => w.id === updatedWallet.id ? updatedWallet : w));
@@ -137,6 +138,15 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     const updateCategory = (updatedCategory: Category) => setCategories(prev => prev.map(c => c.id === updatedCategory.id ? updatedCategory : c));
     const deleteCategory = (categoryId: number) => setCategories(prev => prev.filter(c => c.id !== categoryId));
 
+    // Permission Management
+    const updateUserPermissions = (userId: number, walletIds: number[]) => {
+        // Remove old permissions for the user
+        const otherUserPermissions = permissions.filter(p => p.userId !== userId);
+        // Create new permissions
+        const newUserPermissions = walletIds.map(walletId => ({ userId, walletId }));
+        // Set new state
+        setPermissions([...otherUserPermissions, ...newUserPermissions]);
+    };
 
     // Data Getters and Calculators
     const getWalletById = useCallback((id: number) => wallets.find(w => w.id === id), [wallets]);
@@ -158,6 +168,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         login, logout, setActiveView, addTransaction, getWalletById, getCategoryById,
         calculateWalletBalance, updateProfile, addUser, updateUser, deleteUser,
         addWallet, updateWallet, deleteWallet, addCategory, updateCategory, deleteCategory,
+        updateUserPermissions,
     };
 
     return (

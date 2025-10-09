@@ -14,6 +14,7 @@ export interface User {
 export interface Wallet {
     id: number;
     name: string;
+    icon: string; // Icon component name from lucide-react
     initialBalance: number;
 }
 
