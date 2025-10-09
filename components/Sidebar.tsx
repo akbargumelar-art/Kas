@@ -13,12 +13,12 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, setIsOpen }) => {
 
     const navItems = [
         { view: 'dashboard', label: 'Dashboard', icon: 'LayoutDashboard', roles: [Role.ADMIN, Role.VIEWER] },
-        { view: 'transactions', label: 'Transactions', icon: 'ArrowRightLeft', roles: [Role.ADMIN, Role.VIEWER] },
+        { view: 'transactions', label: 'Transactions', icon: 'ArrowRightLeft', roles: [Role.ADMIN] },
         { view: 'management', label: 'Management', icon: 'Settings', roles: [Role.ADMIN] },
     ];
 
-    const handleNavClick = (view: 'dashboard' | 'transactions' | 'management') => {
-        setActiveView(view);
+    const handleNavClick = (view: 'dashboard' | 'transactions' | 'management' | 'profile') => {
+        setActiveView(view as any);
         if (window.innerWidth < 768) { // md breakpoint
             setIsOpen(false);
         }
@@ -38,7 +38,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, setIsOpen }) => {
                             <li key={item.view}>
                                 <a
                                     href="#"
-                                    onClick={() => handleNavClick(item.view as any)}
+                                    onClick={(e) => { e.preventDefault(); handleNavClick(item.view as any); }}
                                     className={`flex items-center p-3 my-1 rounded-lg transition-colors ${activeView === item.view ? 'bg-primary' : 'hover:bg-gray-700'}`}
                                 >
                                     <Icon name={item.icon as any} className="mr-3" />
@@ -49,7 +49,11 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, setIsOpen }) => {
                     </ul>
                 </nav>
                 <div className="p-4 border-t border-gray-700">
-                    <a href="#" onClick={logout} className="flex items-center p-3 rounded-lg hover:bg-gray-700 transition-colors">
+                     <a href="#" onClick={(e) => { e.preventDefault(); handleNavClick('profile'); }} className={`flex items-center p-3 rounded-lg transition-colors mb-2 ${activeView === 'profile' ? 'bg-gray-600' : 'hover:bg-gray-700'}`}>
+                        <Icon name="UserCog" className="mr-3" />
+                        <span>Profile</span>
+                    </a>
+                    <a href="#" onClick={(e) => { e.preventDefault(); logout(); }} className="flex items-center p-3 rounded-lg hover:bg-gray-700 transition-colors">
                         <Icon name="LogOut" className="mr-3" />
                         <span>Logout</span>
                     </a>

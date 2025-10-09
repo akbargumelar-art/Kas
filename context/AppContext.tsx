@@ -1,16 +1,52 @@
 import React, { createContext, useContext, useState, ReactNode, useCallback, useMemo, useEffect } from 'react';
 import { User, Role, Wallet, Category, Transaction, CategoryType, UserWalletPermission } from '../types.ts';
 
-// --- CONTEXT ---
+// --- MOCK DATA (Akan digantikan oleh API calls) ---
+const MOCK_USERS: User[] = [
+    { id: 1, name: 'Akbar Gumelar', username: 'admin', password: 'password123', role: Role.ADMIN },
+    { id: 2, name: 'Viewer A', username: 'viewer_a', password: 'password123', role: Role.VIEWER },
+    { id: 3, name: 'Viewer B', username: 'viewer_b', password: 'password123', role: Role.VIEWER },
+];
 
-type ActiveView = 'dashboard' | 'transactions' | 'management';
+const MOCK_WALLETS: Wallet[] = [
+    { id: 1, name: 'Cash', initialBalance: 500000 },
+    { id: 2, name: 'Bank Mandiri', initialBalance: 5000000 },
+    { id: 3, name: 'GoPay', initialBalance: 250000 },
+];
+
+const MOCK_CATEGORIES: Category[] = [
+    { id: 1, name: 'Gaji', type: CategoryType.INCOME, icon: 'DollarSign' },
+    { id: 2, name: 'Hadiah', type: CategoryType.INCOME, icon: 'Gift' },
+    { id: 3, name: 'Makanan & Minuman', type: CategoryType.EXPENSE, icon: 'Utensils' },
+    { id: 4, name: 'Transportasi', type: CategoryType.EXPENSE, icon: 'Car' },
+    { id: 5, name: 'Tagihan', type: CategoryType.EXPENSE, icon: 'FileText' },
+    { id: 6, name: 'Belanja', type: CategoryType.EXPENSE, icon: 'ShoppingCart' },
+];
+
+const MOCK_TRANSACTIONS: Transaction[] = [
+    { id: 1, date: '2024-07-25', amount: 7500000, type: CategoryType.INCOME, description: 'Gaji Juli', categoryId: 1, walletId: 2, userId: 1 },
+    { id: 2, date: '2024-07-25', amount: 50000, type: CategoryType.EXPENSE, description: 'Makan siang', categoryId: 3, walletId: 1, userId: 1 },
+    { id: 3, date: '2024-07-26', amount: 150000, type: CategoryType.EXPENSE, description: 'Bensin', categoryId: 4, walletId: 3, userId: 1 },
+    { id: 4, date: '2024-07-27', amount: 550000, type: CategoryType.EXPENSE, description: 'Tagihan Listrik', categoryId: 5, walletId: 2, userId: 1 },
+];
+
+const MOCK_PERMISSIONS: UserWalletPermission[] = [
+    { userId: 2, walletId: 1 }, // viewer_a can see Cash
+    { userId: 3, walletId: 2 }, // viewer_b can see Bank Mandiri
+    { userId: 3, walletId: 3 }, // viewer_b can see GoPay
+];
+
+// --- CONTEXT ---
+type ActiveView = 'dashboard' | 'transactions' | 'management' | 'profile';
 
 interface AppContextType {
     currentUser: User | null;
     activeView: ActiveView;
+    users: User[];
     wallets: Wallet[];
     transactions: Transaction[];
     categories: Category[];
+    permissions: UserWalletPermission[];
     login: (username: string, password?: string) => Promise<boolean>;
     logout: () => void;
     setActiveView: (view: ActiveView) => void;
@@ -18,130 +54,110 @@ interface AppContextType {
     getWalletById: (id: number) => Wallet | undefined;
     getCategoryById: (id: number) => Category | undefined;
     calculateWalletBalance: (walletId: number) => number;
+    updateProfile: (user: User) => void;
+    addUser: (user: Omit<User, 'id'>) => void;
+    updateUser: (user: User) => void;
+    deleteUser: (userId: number) => void;
+    addWallet: (wallet: Omit<Wallet, 'id'>) => void;
+    updateWallet: (wallet: Wallet) => void;
+    deleteWallet: (walletId: number) => void;
+    addCategory: (category: Omit<Category, 'id'>) => void;
+    updateCategory: (category: Category) => void;
+    deleteCategory: (categoryId: number) => void;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
-const API_BASE_URL = 'http://localhost:3001/api'; // Ganti dengan URL produksi Anda nanti
-
 export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-    // State akan diisi dari API
-    const [wallets, setWallets] = useState<Wallet[]>([]);
-    const [categories, setCategories] = useState<Category[]>([]);
-    const [transactions, setTransactions] = useState<Transaction[]>([]);
-    
-    // State untuk user tetap di frontend untuk sementara
     const [currentUser, setCurrentUser] = useState<User | null>(null);
     const [activeView, setActiveView] = useState<ActiveView>('dashboard');
+    const [users, setUsers] = useState<User[]>(MOCK_USERS);
+    const [wallets, setWallets] = useState<Wallet[]>(MOCK_WALLETS);
+    const [categories, setCategories] = useState<Category[]>(MOCK_CATEGORIES);
+    const [transactions, setTransactions] = useState<Transaction[]>(MOCK_TRANSACTIONS);
+    const [permissions, setPermissions] = useState<UserWalletPermission[]>(MOCK_PERMISSIONS);
 
-    // Mengambil data awal saat aplikasi dimuat
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                // Di aplikasi nyata, endpoint ini akan mengambil data berdasarkan user yang login
-                // FIX: The Promise.all call was only fetching one of three resources, causing a
-                // destructuring error because it expected three results. Uncommented the fetches
-                // for wallets and categories to resolve the error and enable core app functionality.
-                const [transactionsRes, walletsRes, categoriesRes] = await Promise.all([
-                    fetch(`${API_BASE_URL}/transactions`), // Ganti dengan endpoint yang sesuai
-                    fetch(`${API_BASE_URL}/wallets`), 
-                    fetch(`${API_BASE_URL}/categories`),
-                ]);
-
-                const transactionsData = await transactionsRes.json();
-                const walletsData = await walletsRes.json();
-                const categoriesData = await categoriesRes.json();
-                
-                setTransactions(transactionsData);
-                setWallets(walletsData);
-                setCategories(categoriesData);
-
-            } catch (error) {
-                console.error("Failed to fetch initial data:", error);
-            }
-        };
-
-        if (currentUser) {
-            fetchData();
-        }
-    }, [currentUser]);
-
-    // Fungsi login masih mock untuk saat ini
+    // Login/Logout and View Management
     const login = useCallback(async (username: string, password?: string): Promise<boolean> => {
-        // TODO: Ganti ini dengan panggilan API ke endpoint /api/login
-        const MOCK_USERS: User[] = [
-            { id: 1, username: 'admin', password: 'password123', role: Role.ADMIN },
-            { id: 2, username: 'viewer_a', password: 'password123', role: Role.VIEWER },
-            { id: 3, username: 'viewer_b', password: 'password123', role: Role.VIEWER },
-        ];
-        const user = MOCK_USERS.find(u => u.username === username && u.password === password);
+        const user = users.find(u => u.username === username && u.password === password);
         if (user) {
             setCurrentUser(user);
+            setActiveView('dashboard');
             return true;
         }
         return false;
-    }, []);
-
+    }, [users]);
 
     const logout = useCallback(() => {
         setCurrentUser(null);
         setActiveView('dashboard');
     }, []);
 
+    // CRUD Operations (Mocked)
     const addTransaction = useCallback(async (transactionData: Omit<Transaction, 'id' | 'userId'>) => {
         if (!currentUser) return;
-        try {
-            const response = await fetch(`${API_BASE_URL}/transactions`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(transactionData),
-            });
-
-            if (!response.ok) {
-                throw new Error('Failed to add transaction');
-            }
-
-            const newTransaction = await response.json();
-            // Perbarui state lokal dengan data dari server
-            setTransactions(prev => [newTransaction, ...prev].sort((a,b) => new Date(b.date).getTime() - new Date(a.date).getTime()));
-
-        } catch (error) {
-            console.error("Error adding transaction:", error);
-        }
+        const newTransaction: Transaction = {
+            ...transactionData,
+            id: Date.now(),
+            userId: currentUser.id,
+        };
+        setTransactions(prev => [newTransaction, ...prev].sort((a,b) => new Date(b.date).getTime() - new Date(a.date).getTime()));
     }, [currentUser]);
 
+    const updateProfile = (updatedUser: User) => {
+        if (!currentUser) return;
+        // Update user in the main users list
+        setUsers(prevUsers => prevUsers.map(u => u.id === updatedUser.id ? updatedUser : u));
+        // Update the currently logged-in user state
+        setCurrentUser(updatedUser);
+        alert('Profile updated successfully!');
+    };
+    
+    // User Management
+    const addUser = (userData: Omit<User, 'id'>) => {
+        const newUser: User = { ...userData, id: Date.now() };
+        setUsers(prev => [...prev, newUser]);
+    };
+    const updateUser = (updatedUser: User) => setUsers(prev => prev.map(u => u.id === updatedUser.id ? updatedUser : u));
+    const deleteUser = (userId: number) => setUsers(prev => prev.filter(u => u.id !== userId));
+
+    // Wallet Management
+    const addWallet = (walletData: Omit<Wallet, 'id'>) => {
+        const newWallet: Wallet = { ...walletData, id: Date.now() };
+        setWallets(prev => [...prev, newWallet]);
+    };
+    const updateWallet = (updatedWallet: Wallet) => setWallets(prev => prev.map(w => w.id === updatedWallet.id ? updatedWallet : w));
+    const deleteWallet = (walletId: number) => setWallets(prev => prev.filter(w => w.id !== walletId));
+
+    // Category Management
+    const addCategory = (categoryData: Omit<Category, 'id'>) => {
+        const newCategory: Category = { ...categoryData, id: Date.now() };
+        setCategories(prev => [...prev, newCategory]);
+    };
+    const updateCategory = (updatedCategory: Category) => setCategories(prev => prev.map(c => c.id === updatedCategory.id ? updatedCategory : c));
+    const deleteCategory = (categoryId: number) => setCategories(prev => prev.filter(c => c.id !== categoryId));
+
+
+    // Data Getters and Calculators
     const getWalletById = useCallback((id: number) => wallets.find(w => w.id === id), [wallets]);
     const getCategoryById = useCallback((id: number) => categories.find(c => c.id === id), [categories]);
     
-    // Fungsi ini perlu penyesuaian karena data wallet dan initial balance belum dari API
     const calculateWalletBalance = useCallback((walletId: number): number => {
         const wallet = getWalletById(walletId);
         if (!wallet) return 0;
-
         const balance = transactions
             .filter(t => t.walletId === walletId)
             .reduce((acc, t) => {
                 return t.type === CategoryType.INCOME ? acc + t.amount : acc - t.amount;
             }, wallet.initialBalance);
-        
         return balance;
     }, [transactions, getWalletById]);
 
     const value: AppContextType = {
-        currentUser,
-        activeView,
-        wallets, // Ini perlu diisi dari API
-        transactions,
-        categories, // Ini perlu diisi dari API
-        login,
-        logout,
-        setActiveView,
-        addTransaction,
-        getWalletById,
-        getCategoryById,
-        calculateWalletBalance,
+        currentUser, activeView, users, wallets, transactions, categories, permissions,
+        login, logout, setActiveView, addTransaction, getWalletById, getCategoryById,
+        calculateWalletBalance, updateProfile, addUser, updateUser, deleteUser,
+        addWallet, updateWallet, deleteWallet, addCategory, updateCategory, deleteCategory,
     };
 
     return (

@@ -5,6 +5,7 @@ export enum Role {
 
 export interface User {
     id: number;
+    name: string;
     username: string;
     password?: string; // Added for mock authentication
     role: Role;

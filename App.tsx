@@ -6,6 +6,7 @@ import Layout from './components/Layout.tsx';
 import Dashboard from './components/Dashboard.tsx';
 import Transactions from './components/Transactions.tsx';
 import Management from './components/Management.tsx';
+import Profile from './components/Profile.tsx';
 
 const AppContent: React.FC = () => {
     const { currentUser, activeView } = useAppContext();
@@ -22,6 +23,8 @@ const AppContent: React.FC = () => {
                 return <Transactions />;
             case 'management':
                 return <Management />;
+            case 'profile':
+                return <Profile />;
             default:
                 return <Dashboard />;
         }

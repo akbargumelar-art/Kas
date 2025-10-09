@@ -74,15 +74,6 @@ const Login: React.FC = () => {
                         {isLoading ? 'Logging in...' : 'Login'}
                     </button>
                 </form>
-
-                <div className="mt-6 p-4 bg-base-200 rounded-lg text-sm">
-                    <h4 className="font-bold text-neutral mb-2">Demo Accounts:</h4>
-                    <ul className="list-disc list-inside text-secondary space-y-1">
-                        <li><strong>admin</strong> / <strong>password123</strong> (Admin)</li>
-                        <li><strong>viewer_a</strong> / <strong>password123</strong> (Viewer)</li>
-                        <li><strong>viewer_b</strong> / <strong>password123</strong> (Viewer)</li>
-                    </ul>
-                </div>
             </div>
         </div>
     );
