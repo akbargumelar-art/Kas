@@ -5,32 +5,40 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kas Ciraya</title>
 
-    <!-- Import Map -->
-    <script type="importmap">
-    {
-      "imports": {
-        "react": "https://aistudiocdn.com/react@^19.2.0",
-        "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
-        "react/": "https://aistudiocdn.com/react@^19.2.0/",
-        "lucide-react": "https://aistudiocdn.com/lucide-react@^0.545.0",
-        "recharts": "https://aistudiocdn.com/recharts@^3.2.1"
-      }
-    }
-    </script>
+    <!-- 
+      Vite akan mengelola dependensi dari node_modules, 
+      sehingga importmap dan skrip Babel tidak lagi diperlukan.
+    -->
     
     <!-- Tailwind CSS & DaisyUI -->
     <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.10/dist/full.min.css" rel="stylesheet" type="text/css" />
-    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- 
+      Vite akan meng-handle Tailwind CSS melalui PostCSS,
+      sehingga skrip CDN ini tidak diperlukan jika dikonfigurasi dengan benar di proyek.
+      Untuk saat ini, kita biarkan link DaisyUI.
+    -->
 
-    <!-- Babel for live TSX/JSX transpilation -->
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-
-    <!-- Main Application Script -->
-    <script type="text/babel" data-type="module" src="/index.tsx"></script>
-
+<script type="importmap">
+{
+  "imports": {
+    "react/": "https://aistudiocdn.com/react@^19.2.0/",
+    "react": "https://aistudiocdn.com/react@^19.2.0",
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
+    "lucide-react": "https://aistudiocdn.com/lucide-react@^0.545.0",
+    "recharts": "https://aistudiocdn.com/recharts@^3.2.1"
+  }
+}
+</script>
 </head>
 <body class="bg-base-200">
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <div id="root"></div>
+
+    <!-- 
+      Ini adalah titik masuk (entry point) untuk aplikasi Vite.
+      Vite akan secara otomatis memproses file ini.
+    -->
+    <script type="module" src="/index.tsx"></script>
 </body>
 </html>
