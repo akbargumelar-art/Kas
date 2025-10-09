@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { AppProvider, useAppContext } from './context/AppContext.tsx';
 import Login from './components/Login.tsx';
@@ -7,9 +6,10 @@ import Dashboard from './components/Dashboard.tsx';
 import Transactions from './components/Transactions.tsx';
 import Management from './components/Management.tsx';
 import Profile from './components/Profile.tsx';
+import TransactionForm from './components/TransactionForm.tsx';
 
 const AppContent: React.FC = () => {
-    const { currentUser, activeView } = useAppContext();
+    const { currentUser, activeView, isTransactionFormOpen, closeTransactionForm } = useAppContext();
 
     if (!currentUser) {
         return <Login />;
@@ -30,7 +30,12 @@ const AppContent: React.FC = () => {
         }
     };
 
-    return <Layout>{renderActiveView()}</Layout>;
+    return (
+        <>
+            <Layout>{renderActiveView()}</Layout>
+            {isTransactionFormOpen && <TransactionForm onClose={closeTransactionForm} />}
+        </>
+    );
 };
 
 

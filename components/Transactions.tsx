@@ -1,7 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { useAppContext } from '../context/AppContext.tsx';
 import { Role, Transaction, CategoryType } from '../types.ts';
-import TransactionForm from './TransactionForm.tsx';
 import Icon from './ui/Icon.tsx';
 
 const ReceiptViewerModal: React.FC<{ imageUrl: string; onClose: () => void }> = ({ imageUrl, onClose }) => (
@@ -17,7 +16,6 @@ const ReceiptViewerModal: React.FC<{ imageUrl: string; onClose: () => void }> = 
 
 const Transactions: React.FC = () => {
     const { transactions, wallets, categories, getWalletById, getCategoryById, currentUser } = useAppContext();
-    const [isFormOpen, setIsFormOpen] = useState(false);
     const [selectedReceipt, setSelectedReceipt] = useState<string | null>(null);
 
     const [filterDate, setFilterDate] = useState('');
@@ -44,18 +42,9 @@ const Transactions: React.FC = () => {
     };
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-6 p-4">
             <div className="flex justify-between items-center">
-                <h1 className="text-3xl font-bold text-neutral">Transactions</h1>
-                {currentUser?.role === Role.ADMIN && (
-                    <button
-                        onClick={() => setIsFormOpen(true)}
-                        className="bg-primary text-primary-content font-bold py-2 px-4 rounded-md hover:bg-primary-focus flex items-center gap-2"
-                    >
-                        <Icon name="Plus" size={16} />
-                        Add Transaction
-                    </button>
-                )}
+                <h1 className="text-3xl font-bold text-neutral-content">Transactions</h1>
             </div>
 
             <div className="bg-base-100 p-4 rounded-xl shadow">
@@ -105,7 +94,7 @@ const Transactions: React.FC = () => {
                                 return (
                                 <tr key={t.id} className="border-b border-base-200 last:border-b-0">
                                     <td className="p-4">{formatDate(t.date)}</td>
-                                    <td className="p-4 text-neutral font-medium">{t.description}</td>
+                                    <td className="p-4 text-neutral-content font-medium">{t.description}</td>
                                     <td className="p-4">
                                         {category && <span className="flex items-center gap-2">
                                             <Icon name={category.icon as any} size={16} /> {category.name}
@@ -130,8 +119,7 @@ const Transactions: React.FC = () => {
                      {filteredTransactions.length === 0 && <div className="text-center p-8 text-gray-500">No transactions found.</div>}
                 </div>
             </div>
-
-            {isFormOpen && <TransactionForm onClose={() => setIsFormOpen(false)} />}
+            
             {selectedReceipt && <ReceiptViewerModal imageUrl={selectedReceipt} onClose={() => setSelectedReceipt(null)} />}
         </div>
     );

@@ -24,10 +24,10 @@ const MOCK_CATEGORIES: Category[] = [
 ];
 
 const MOCK_TRANSACTIONS: Transaction[] = [
-    { id: 1, date: '2024-07-25', amount: 7500000, type: CategoryType.INCOME, description: 'Gaji Juli', categoryId: 1, walletId: 2, userId: 1 },
-    { id: 2, date: '2024-07-25', amount: 50000, type: CategoryType.EXPENSE, description: 'Makan siang', categoryId: 3, walletId: 1, userId: 1 },
-    { id: 3, date: '2024-07-26', amount: 150000, type: CategoryType.EXPENSE, description: 'Bensin', categoryId: 4, walletId: 3, userId: 1 },
-    { id: 4, date: '2024-07-27', amount: 550000, type: CategoryType.EXPENSE, description: 'Tagihan Listrik', categoryId: 5, walletId: 2, userId: 1 },
+    // { id: 1, date: '2024-07-25', amount: 7500000, type: CategoryType.INCOME, description: 'Gaji Juli', categoryId: 1, walletId: 2, userId: 1 },
+    // { id: 2, date: '2024-07-25', amount: 50000, type: CategoryType.EXPENSE, description: 'Makan siang', categoryId: 3, walletId: 1, userId: 1 },
+    // { id: 3, date: '2024-07-26', amount: 150000, type: CategoryType.EXPENSE, description: 'Bensin', categoryId: 4, walletId: 3, userId: 1 },
+    // { id: 4, date: '2024-07-27', amount: 550000, type: CategoryType.EXPENSE, description: 'Tagihan Listrik', categoryId: 5, walletId: 2, userId: 1 },
 ];
 
 const MOCK_PERMISSIONS: UserWalletPermission[] = [
@@ -47,6 +47,9 @@ interface AppContextType {
     transactions: Transaction[];
     categories: Category[];
     permissions: UserWalletPermission[];
+    isTransactionFormOpen: boolean;
+    openTransactionForm: () => void;
+    closeTransactionForm: () => void;
     login: (username: string, password?: string) => Promise<boolean>;
     logout: () => void;
     setActiveView: (view: ActiveView) => void;
@@ -77,6 +80,10 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     const [categories, setCategories] = useState<Category[]>(MOCK_CATEGORIES);
     const [transactions, setTransactions] = useState<Transaction[]>(MOCK_TRANSACTIONS);
     const [permissions, setPermissions] = useState<UserWalletPermission[]>(MOCK_PERMISSIONS);
+    const [isTransactionFormOpen, setTransactionFormOpen] = useState(false);
+
+    const openTransactionForm = () => setTransactionFormOpen(true);
+    const closeTransactionForm = () => setTransactionFormOpen(false);
 
     // Login/Logout and View Management
     const login = useCallback(async (username: string, password?: string): Promise<boolean> => {
@@ -103,13 +110,12 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
             userId: currentUser.id,
         };
         setTransactions(prev => [newTransaction, ...prev].sort((a,b) => new Date(b.date).getTime() - new Date(a.date).getTime()));
+        closeTransactionForm();
     }, [currentUser]);
 
     const updateProfile = (updatedUser: User) => {
         if (!currentUser) return;
-        // Update user in the main users list
         setUsers(prevUsers => prevUsers.map(u => u.id === updatedUser.id ? updatedUser : u));
-        // Update the currently logged-in user state
         setCurrentUser(updatedUser);
         alert('Profile updated successfully!');
     };
@@ -140,11 +146,8 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
 
     // Permission Management
     const updateUserPermissions = (userId: number, walletIds: number[]) => {
-        // Remove old permissions for the user
         const otherUserPermissions = permissions.filter(p => p.userId !== userId);
-        // Create new permissions
         const newUserPermissions = walletIds.map(walletId => ({ userId, walletId }));
-        // Set new state
         setPermissions([...otherUserPermissions, ...newUserPermissions]);
     };
 
@@ -165,6 +168,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
 
     const value: AppContextType = {
         currentUser, activeView, users, wallets, transactions, categories, permissions,
+        isTransactionFormOpen, openTransactionForm, closeTransactionForm,
         login, logout, setActiveView, addTransaction, getWalletById, getCategoryById,
         calculateWalletBalance, updateProfile, addUser, updateUser, deleteUser,
         addWallet, updateWallet, deleteWallet, addCategory, updateCategory, deleteCategory,
