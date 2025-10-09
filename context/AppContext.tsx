@@ -9,9 +9,9 @@ const MOCK_USERS: User[] = [
 ];
 
 const MOCK_WALLETS: Wallet[] = [
-    { id: 1, name: 'Cash', icon: 'Wallet', initialBalance: 500000 },
-    { id: 2, name: 'Bank Mandiri', icon: 'Landmark', initialBalance: 5000000 },
-    { id: 3, name: 'GoPay', icon: 'Smartphone', initialBalance: 250000 },
+    { id: 1, name: 'Cash', icon: 'Wallet', initialBalance: 0 },
+    { id: 2, name: 'BCA', icon: 'Landmark', initialBalance: 0 },
+    { id: 3, name: 'SeaBank', icon: 'ShieldCheck', initialBalance: 0 },
 ];
 
 const MOCK_CATEGORIES: Category[] = [

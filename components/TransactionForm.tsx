@@ -38,58 +38,59 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onClose }) => {
     };
 
     return (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-40">
-            <div className="bg-base-100 rounded-xl shadow-lg p-6 w-full max-w-lg relative m-4">
-                <button onClick={onClose} className="absolute top-4 right-4 text-gray-500 hover:text-gray-800">
-                    <Icon name="X" size={24} />
-                </button>
-                <h2 className="text-2xl font-bold mb-4 text-neutral">Add New Transaction</h2>
-                
-                <div className="flex border border-gray-300 rounded-lg p-1 mb-4">
-                    <button 
-                        onClick={() => setType(CategoryType.EXPENSE)}
-                        className={`w-1/2 p-2 rounded-md font-semibold transition ${type === CategoryType.EXPENSE ? 'bg-error text-white' : 'hover:bg-red-50'}`}
-                    >
-                        Expense
-                    </button>
-                    <button 
-                        onClick={() => setType(CategoryType.INCOME)}
-                        className={`w-1/2 p-2 rounded-md font-semibold transition ${type === CategoryType.INCOME ? 'bg-success text-white' : 'hover:bg-green-50'}`}
-                    >
-                        Income
+        <div className="fixed inset-0 bg-black bg-opacity-75 flex justify-center items-end sm:items-center z-40">
+            <div className="bg-base-100 rounded-t-2xl sm:rounded-xl shadow-lg p-6 w-full max-w-lg relative m-0 sm:m-4">
+                <div className="flex justify-between items-center mb-6">
+                    <h2 className="text-xl font-bold text-base-content">Tambah Transaksi</h2>
+                    <button onClick={onClose} className="btn btn-sm btn-circle btn-ghost">
+                        <Icon name="X" size={20} />
                     </button>
                 </div>
                 
+                <div role="tablist" className="tabs tabs-boxed grid-cols-2 mb-4">
+                    <a role="tab"
+                        onClick={() => setType(CategoryType.EXPENSE)}
+                        className={`tab ${type === CategoryType.EXPENSE ? 'tab-active !bg-error text-white' : ''}`}
+                    >
+                        Pengeluaran
+                    </a>
+                    <a role="tab"
+                        onClick={() => setType(CategoryType.INCOME)}
+                        className={`tab ${type === CategoryType.INCOME ? 'tab-active !bg-success text-white' : ''}`}
+                    >
+                        Pemasukan
+                    </a>
+                </div>
+                
                 <form onSubmit={handleSubmit} className="space-y-4">
-                     <div>
-                        <label className="block text-sm font-medium text-gray-700">Amount</label>
-                        <input type="number" value={amount} onChange={e => setAmount(e.target.value)} className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2" required />
-                    </div>
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700">Date</label>
-                        <input type="date" value={date} onChange={e => setDate(e.target.value)} className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2" required />
-                    </div>
-                     <div>
-                        <label className="block text-sm font-medium text-gray-700">Category</label>
-                        <select value={categoryId} onChange={e => setCategoryId(e.target.value)} className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2" required>
-                            <option value="" disabled>Select a category</option>
+                     <label className="form-control w-full">
+                        <div className="label"><span className="label-text">Jumlah</span></div>
+                        <input type="number" value={amount} onChange={e => setAmount(e.target.value)} placeholder="Rp 0" className="input input-bordered w-full" required />
+                    </label>
+                    <label className="form-control w-full">
+                        <div className="label"><span className="label-text">Tanggal</span></div>
+                        <input type="date" value={date} onChange={e => setDate(e.target.value)} className="input input-bordered w-full" required />
+                    </label>
+                     <label className="form-control w-full">
+                        <div className="label"><span className="label-text">Kategori</span></div>
+                        <select value={categoryId} onChange={e => setCategoryId(e.target.value)} className="select select-bordered" required>
+                            <option value="" disabled>Pilih kategori</option>
                             {filteredCategories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
                         </select>
-                    </div>
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700">Wallet</label>
-                        <select value={walletId} onChange={e => setWalletId(e.target.value)} className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2" required>
-                           <option value="" disabled>Select a wallet</option>
+                    </label>
+                    <label className="form-control w-full">
+                        <div className="label"><span className="label-text">Dompet</span></div>
+                        <select value={walletId} onChange={e => setWalletId(e.target.value)} className="select select-bordered" required>
+                           <option value="" disabled>Pilih dompet</option>
                             {wallets.map(w => <option key={w.id} value={w.id}>{w.name}</option>)}
                         </select>
-                    </div>
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700">Description</label>
-                        <textarea value={description} onChange={e => setDescription(e.target.value)} className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"></textarea>
-                    </div>
-                    <div className="flex justify-end gap-3 pt-4">
-                        <button type="button" onClick={onClose} className="bg-base-200 text-neutral font-bold py-2 px-4 rounded-md hover:bg-base-300">Cancel</button>
-                        <button type="submit" className="bg-primary text-primary-content font-bold py-2 px-4 rounded-md hover:bg-primary-focus">Save Transaction</button>
+                    </label>
+                    <label className="form-control w-full">
+                        <div className="label"><span className="label-text">Deskripsi</span></div>
+                        <textarea value={description} onChange={e => setDescription(e.target.value)} placeholder="Contoh: Makan siang" className="textarea textarea-bordered"></textarea>
+                    </label>
+                    <div className="pt-4">
+                        <button type="submit" className="btn btn-primary w-full">Simpan Transaksi</button>
                     </div>
                 </form>
             </div>

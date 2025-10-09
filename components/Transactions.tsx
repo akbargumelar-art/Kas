@@ -42,49 +42,49 @@ const Transactions: React.FC = () => {
     };
 
     return (
-        <div className="space-y-6 p-4">
+        <div className="space-y-6">
             <div className="flex justify-between items-center">
-                <h1 className="text-3xl font-bold text-neutral-content">Transactions</h1>
+                <h1 className="text-3xl font-bold text-base-content">Riwayat Transaksi</h1>
             </div>
 
-            <div className="bg-base-100 p-4 rounded-xl shadow">
+            <div className="bg-base-100 p-4 rounded-box shadow">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <input
                         type="date"
                         value={filterDate}
                         onChange={(e) => setFilterDate(e.target.value)}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary"
+                        className="input input-bordered w-full"
                     />
                     <select
                         value={filterWallet}
                         onChange={(e) => setFilterWallet(e.target.value)}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary"
+                        className="select select-bordered w-full"
                     >
-                        <option value="all">All Wallets</option>
+                        <option value="all">Semua Dompet</option>
                         {wallets.map(w => <option key={w.id} value={w.id}>{w.name}</option>)}
                     </select>
                     <select
                         value={filterCategory}
                         onChange={(e) => setFilterCategory(e.target.value)}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary"
+                        className="select select-bordered w-full"
                     >
-                        <option value="all">All Categories</option>
+                        <option value="all">Semua Kategori</option>
                         {categories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
                     </select>
                 </div>
             </div>
 
-            <div className="bg-base-100 rounded-xl shadow overflow-hidden">
+            <div className="bg-base-100 rounded-box shadow overflow-hidden">
                 <div className="overflow-x-auto">
-                    <table className="w-full text-left">
-                        <thead className="bg-base-200">
+                    <table className="table w-full">
+                        <thead>
                             <tr>
-                                <th className="p-4 font-semibold">Date</th>
-                                <th className="p-4 font-semibold">Description</th>
-                                <th className="p-4 font-semibold">Category</th>
-                                <th className="p-4 font-semibold">Wallet</th>
-                                <th className="p-4 font-semibold text-right">Amount</th>
-                                <th className="p-4 font-semibold text-center">Receipt</th>
+                                <th>Tanggal</th>
+                                <th>Deskripsi</th>
+                                <th>Kategori</th>
+                                <th>Dompet</th>
+                                <th className="text-right">Jumlah</th>
+                                <th className="text-center">Struk</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -92,19 +92,19 @@ const Transactions: React.FC = () => {
                                 const category = getCategoryById(t.categoryId);
                                 const wallet = getWalletById(t.walletId);
                                 return (
-                                <tr key={t.id} className="border-b border-base-200 last:border-b-0">
-                                    <td className="p-4">{formatDate(t.date)}</td>
-                                    <td className="p-4 text-neutral-content font-medium">{t.description}</td>
-                                    <td className="p-4">
+                                <tr key={t.id} className="hover">
+                                    <td>{formatDate(t.date)}</td>
+                                    <td className="font-medium">{t.description}</td>
+                                    <td>
                                         {category && <span className="flex items-center gap-2">
                                             <Icon name={category.icon as any} size={16} /> {category.name}
                                         </span>}
                                     </td>
-                                    <td className="p-4">{wallet?.name}</td>
-                                    <td className={`p-4 text-right font-bold ${t.type === CategoryType.INCOME ? 'text-success' : 'text-error'}`}>
+                                    <td>{wallet?.name}</td>
+                                    <td className={`text-right font-bold ${t.type === CategoryType.INCOME ? 'text-success' : 'text-error'}`}>
                                         {t.type === CategoryType.INCOME ? '+' : '-'} {formatCurrency(t.amount)}
                                     </td>
-                                    <td className="p-4 text-center">
+                                    <td className="text-center">
                                         {t.receiptImageUrl && (
                                             <button onClick={() => setSelectedReceipt(t.receiptImageUrl!)} className="text-secondary hover:text-primary">
                                                 <Icon name="Camera" size={20} />
@@ -116,7 +116,7 @@ const Transactions: React.FC = () => {
                             })}
                         </tbody>
                     </table>
-                     {filteredTransactions.length === 0 && <div className="text-center p-8 text-gray-500">No transactions found.</div>}
+                     {filteredTransactions.length === 0 && <div className="text-center p-8 text-base-content/60">Tidak ada transaksi yang ditemukan.</div>}
                 </div>
             </div>
             

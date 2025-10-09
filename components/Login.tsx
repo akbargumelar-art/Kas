@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useAppContext } from '../context/AppContext.tsx';
+import Icon from './ui/Icon.tsx';
 
 const Login: React.FC = () => {
     const { login } = useAppContext();
@@ -12,68 +13,89 @@ const Login: React.FC = () => {
         e.preventDefault();
         setError('');
         setIsLoading(true);
-        const success = await login(username, password);
-        if (!success) {
-            setError('Invalid username or password.');
+        try {
+            const success = await login(username, password);
+            if (!success) {
+                setError('Username atau password salah.');
+            }
+        } catch (err) {
+            setError('Terjadi kesalahan. Silakan coba lagi.');
+        } finally {
+            setIsLoading(false);
         }
-        setIsLoading(false);
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-base-200">
-            <div className="max-w-md w-full bg-base-100 p-8 rounded-xl shadow-lg">
-                <div className="text-center mb-8">
-                    <h1 className="text-3xl font-bold text-neutral">Kas Ciraya</h1>
-                    <p className="text-secondary mt-2">Please sign in to continue</p>
-                </div>
-                <form onSubmit={handleLogin}>
-                    {error && (
-                        <div className="bg-error/20 text-error font-bold p-3 rounded-md mb-4 text-center">
-                           {error}
+        <div className="min-h-screen w-full lg:grid lg:grid-cols-2">
+            {/* Brand Section */}
+            <div className="hidden lg:flex flex-col items-center justify-center bg-primary text-primary-content p-12">
+                <Icon name="Wallet" size={80} className="mb-6" />
+                <h1 className="text-4xl font-bold mb-2">Kas Ciraya</h1>
+                <p className="text-lg text-center opacity-80">
+                    Kelola keuangan pribadi Anda dengan mudah dan efisien.
+                </p>
+            </div>
+
+            {/* Form Section */}
+            <div className="flex items-center justify-center bg-base-200 p-6 sm:p-12">
+                <div className="max-w-md w-full bg-base-100 p-8 rounded-2xl shadow-xl">
+                    <div className="text-center mb-8">
+                         <div className="lg:hidden mb-6">
+                             <Icon name="Wallet" size={48} className="mx-auto text-primary" />
                         </div>
-                    )}
-                    <div className="mb-4">
-                        <label
-                            htmlFor="username"
-                            className="block text-sm font-medium text-gray-700 mb-2"
-                        >
-                            Username
-                        </label>
-                        <input
-                            type="text"
-                            id="username"
-                            value={username}
-                            onChange={(e) => setUsername(e.target.value)}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary"
-                            required
-                            disabled={isLoading}
-                        />
+                        <h1 className="text-3xl font-bold text-neutral">Selamat Datang</h1>
+                        <p className="text-base-content/70 mt-2">Silakan masuk untuk melanjutkan</p>
                     </div>
-                     <div className="mb-6">
-                        <label
-                            htmlFor="password"
-                            className="block text-sm font-medium text-gray-700 mb-2"
-                        >
-                            Password
-                        </label>
-                        <input
-                            type="password"
-                            id="password"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary"
-                            required
+                    <form onSubmit={handleLogin} className="space-y-6">
+                        {error && (
+                            <div role="alert" className="alert alert-error text-sm">
+                                <Icon name="AlertTriangle" size={20} />
+                                <span>{error}</span>
+                            </div>
+                        )}
+                        <div className="form-control">
+                            <label className="label">
+                                <span className="label-text">Username</span>
+                            </label>
+                            <div className="relative">
+                                <Icon name="User" size={20} className="absolute left-3 top-1/2 -translate-y-1/2 text-base-content/40" />
+                                <input
+                                    type="text"
+                                    placeholder="e.g. admin"
+                                    value={username}
+                                    onChange={(e) => setUsername(e.target.value)}
+                                    className="input input-bordered w-full pl-10"
+                                    required
+                                    disabled={isLoading}
+                                />
+                            </div>
+                        </div>
+                         <div className="form-control">
+                            <label className="label">
+                                <span className="label-text">Password</span>
+                            </label>
+                            <div className="relative">
+                                 <Icon name="Lock" size={20} className="absolute left-3 top-1/2 -translate-y-1/2 text-base-content/40" />
+                                <input
+                                    type="password"
+                                    placeholder="••••••••"
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                    className="input input-bordered w-full pl-10"
+                                    required
+                                    disabled={isLoading}
+                                />
+                            </div>
+                        </div>
+                        <button
+                            type="submit"
+                            className="btn btn-primary w-full"
                             disabled={isLoading}
-                        />
-                    </div>
-                    <button
-                        type="submit"
-                        className="w-full bg-primary text-primary-content font-bold py-2 px-4 rounded-md hover:bg-primary-focus focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors duration-300 disabled:bg-gray-400"
-                        disabled={isLoading}
-                    >
-                        {isLoading ? 'Logging in...' : 'Login'}
-                    </button>
-                </form>
+                        >
+                            {isLoading ? <span className="loading loading-spinner"></span> : 'Login'}
+                        </button>
+                    </form>
+                </div>
             </div>
         </div>
     );
