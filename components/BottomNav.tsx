@@ -9,8 +9,8 @@ const BottomNav: React.FC = () => {
     const navItems = [
         { view: 'dashboard', label: 'Ringkasan', icon: 'Home', roles: [Role.ADMIN, Role.VIEWER] },
         { view: 'transactions', label: 'Transaksi', icon: 'BookOpen', roles: [Role.ADMIN, Role.VIEWER] },
-        { view: 'add', label: '', icon: 'Plus', roles: [Role.ADMIN, Role.VIEWER] },
-        { view: 'management', label: 'Anggaran', icon: 'PieChart', roles: [Role.ADMIN] },
+        { view: 'add', label: '', icon: 'Plus', roles: [Role.ADMIN] },
+        { view: 'management', label: 'Management', icon: 'Settings', roles: [Role.ADMIN] },
         { view: 'profile', label: 'Akun', icon: 'User', roles: [Role.ADMIN, Role.VIEWER] },
     ];
     
@@ -49,7 +49,7 @@ const BottomNav: React.FC = () => {
                         <button
                             key={item.view}
                             onClick={() => handleNavClick(item.view)}
-                            className={`flex flex-col items-center justify-center w-1/5 transition-colors duration-200 p-2 rounded-lg ${isActive ? 'text-base-content font-bold' : 'text-base-content/60 hover:text-base-content'}`}
+                            className={`flex flex-col items-center justify-center transition-colors duration-200 p-2 rounded-lg ${isActive ? 'text-base-content font-bold' : 'text-base-content/60 hover:text-base-content'}`}
                              aria-label={item.label}
                         >
                             <Icon name={item.icon as any} size={22} />

@@ -2,6 +2,8 @@ import React, { useMemo, useState } from 'react';
 import { useAppContext } from '../context/AppContext.tsx';
 import { CategoryType, Role, Transaction, Wallet } from '../types.ts';
 import Icon from './ui/Icon.tsx';
+import IncomeExpenseBarChart from './charts/IncomeExpenseBarChart.tsx';
+import ExpensePieChart from './charts/ExpensePieChart.tsx';
 
 const formatCurrency = (amount: number) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(amount);
 
@@ -105,9 +107,15 @@ const MonthlyReportCard: React.FC<{ transactions: Transaction[] }> = ({ transact
             </div>
             
             <div className="flex-1 my-4 flex items-center justify-center min-h-[150px] bg-base-200 border-2 border-dashed border-base-300 rounded-lg">
-                <div className="text-center text-base-content/60">
-                    <p className="text-sm font-semibold">Masukkan transaksi untuk melihat laporan</p>
-                </div>
+                {transactions.length > 0 ? (
+                    <div className="w-full h-full p-2">
+                        <IncomeExpenseBarChart transactions={transactions} />
+                    </div>
+                ) : (
+                    <div className="text-center text-base-content/60">
+                        <p className="text-sm font-semibold">Masukkan transaksi untuk melihat laporan</p>
+                    </div>
+                )}
             </div>
 
             <div className="flex items-center justify-between mt-2">
@@ -122,6 +130,24 @@ const MonthlyReportCard: React.FC<{ transactions: Transaction[] }> = ({ transact
 }
 
 const TopExpensesCard: React.FC = () => {
+    const { transactions } = useAppContext();
+    const [activeTab, setActiveTab] = useState('Bulan');
+
+    const filteredTransactions = useMemo(() => {
+        const now = new Date();
+        const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        if (activeTab === 'Bulan') {
+            const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+            return transactions.filter(t => new Date(t.date) >= firstDayOfMonth);
+        } else { // Minggu
+            const dayOfWeek = today.getDay();
+            const firstDayOfWeek = new Date(today.setDate(today.getDate() - dayOfWeek));
+            return transactions.filter(t => new Date(t.date) >= firstDayOfWeek);
+        }
+    }, [transactions, activeTab]);
+    
+    const hasExpenses = useMemo(() => filteredTransactions.some(t => t.type === CategoryType.EXPENSE), [filteredTransactions]);
+
     return (
          <div className="bg-base-100 rounded-xl shadow p-4">
              <div className="flex justify-between items-center mb-3">
@@ -129,25 +155,53 @@ const TopExpensesCard: React.FC = () => {
                 <a href="#" className="text-sm font-semibold text-success">Lihat detailnya</a>
             </div>
             <div role="tablist" className="tabs tabs-boxed tabs-sm bg-base-200">
-                <a role="tab" className="tab">Minggu</a>
-                <a role="tab" className="tab tab-active">Bulan</a>
+                <a role="tab" className={`tab ${activeTab === 'Minggu' ? 'tab-active' : ''}`} onClick={() => setActiveTab('Minggu')}>Minggu</a>
+                <a role="tab" className={`tab ${activeTab === 'Bulan' ? 'tab-active' : ''}`} onClick={() => setActiveTab('Bulan')}>Bulan</a>
             </div>
-            <div className="flex-1 mt-4 flex flex-col items-center justify-center text-center text-base-content/60 p-4 min-h-[100px]">
-                <p className="text-sm">Kategori pengeluaran teratas akan muncul di sini 🙌</p>
+            <div className="flex-1 mt-4 flex flex-col items-center justify-center min-h-[200px]">
+                {hasExpenses ? (
+                    <ExpensePieChart transactions={filteredTransactions} />
+                ) : (
+                   <p className="text-sm text-base-content/60 p-4 text-center">Kategori pengeluaran teratas akan muncul di sini 🙌</p>
+                )}
             </div>
         </div>
     );
 };
 
-const RecentTransactionsCard: React.FC<{transactions: Transaction[]}> = () => {
+const RecentTransactionsCard: React.FC = () => {
+    const { transactions, getCategoryById, getWalletById } = useAppContext();
+    const recentTransactions = transactions.slice(0, 5);
+
     return (
         <div className="bg-base-100 rounded-xl shadow p-4">
              <div className="flex justify-between items-center mb-4">
                 <h2 className="font-bold text-base">Transaksi terkini</h2>
                 <a href="#" className="text-sm font-semibold text-success">Lihat semua</a>
             </div>
-            <div className="flex-1 flex flex-col items-center justify-center text-center text-base-content/60 p-4 min-h-[100px]">
-                <p className="text-sm">Transaksi yang ditambahkan akan muncul di sini 🙌</p>
+             <div className="space-y-3">
+                {recentTransactions.length > 0 ? recentTransactions.map(t => {
+                    const category = getCategoryById(t.categoryId);
+                    const wallet = getWalletById(t.walletId);
+                    return (
+                        <div key={t.id} className="flex items-center gap-3">
+                            <div className="p-3 bg-base-200 rounded-lg">
+                                <Icon name={category?.icon as any || 'HelpCircle'} size={20} className="text-base-content" />
+                            </div>
+                            <div className="flex-1">
+                                <p className="font-semibold text-sm">{t.description || category?.name}</p>
+                                <p className="text-xs text-base-content/60">{new Date(t.date).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' })} • {wallet?.name}</p>
+                            </div>
+                            <p className={`font-bold text-sm ${t.type === CategoryType.INCOME ? 'text-success' : 'text-error'}`}>
+                                {t.type === CategoryType.INCOME ? '+' : '-'} {formatCurrency(t.amount)}
+                            </p>
+                        </div>
+                    );
+                }) : (
+                     <div className="flex-1 flex flex-col items-center justify-center text-center text-base-content/60 p-4 min-h-[100px]">
+                        <p className="text-sm">Transaksi yang ditambahkan akan muncul di sini 🙌</p>
+                    </div>
+                )}
             </div>
         </div>
     );
@@ -173,7 +227,7 @@ const Dashboard: React.FC = () => {
             <WalletListCard wallets={permittedWallets} />
             <MonthlyReportCard transactions={transactions} />
             <TopExpensesCard />
-            <RecentTransactionsCard transactions={transactions} />
+            <RecentTransactionsCard />
         </div>
     );
 };

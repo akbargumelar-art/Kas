@@ -6,29 +6,32 @@ import { CategoryType, Transaction, Category } from '../../types.ts';
 
 const COLORS = ['#0ea5e9', '#f97316', '#eab308', '#8b5cf6', '#d946ef', '#14b8a6'];
 
-const ExpensePieChart: React.FC = () => {
-    const { transactions, categories, getCategoryById } = useAppContext();
+interface ExpensePieChartProps {
+    transactions: Transaction[];
+}
+
+const ExpensePieChart: React.FC<ExpensePieChartProps> = ({ transactions }) => {
+    const { categories, getCategoryById } = useAppContext();
 
     const processData = (transactions: Transaction[], categories: Category[]) => {
         const expenseData: { [key: string]: number } = {};
-        const expenseCategories = categories.filter(c => c.type === CategoryType.EXPENSE);
-
-        expenseCategories.forEach(cat => {
-            expenseData[cat.name] = 0;
-        });
-
+        
         transactions
             .filter(t => t.type === CategoryType.EXPENSE)
             .forEach(transaction => {
                 const category = getCategoryById(transaction.categoryId);
                 if (category) {
+                    if (!expenseData[category.name]) {
+                        expenseData[category.name] = 0;
+                    }
                     expenseData[category.name] += transaction.amount;
                 }
             });
 
         return Object.entries(expenseData)
             .map(([name, value]) => ({ name, value }))
-            .filter(d => d.value > 0);
+            .filter(d => d.value > 0)
+            .sort((a,b) => b.value - a.value);
     };
 
     const data = processData(transactions, categories);

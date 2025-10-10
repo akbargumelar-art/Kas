@@ -4,7 +4,7 @@ import Icon from './ui/Icon.tsx';
 import { User } from '../types.ts';
 
 const Profile: React.FC = () => {
-    const { currentUser, updateProfile } = useAppContext();
+    const { currentUser, updateProfile, logout } = useAppContext();
     const [formData, setFormData] = useState<User | null>(null);
 
     useEffect(() => {
@@ -36,7 +36,7 @@ const Profile: React.FC = () => {
 
     return (
         <div className="space-y-6">
-            <h1 className="text-3xl font-bold text-neutral">My Profile</h1>
+            <h1 className="text-3xl font-bold text-base-content">Profil Saya</h1>
 
             <div className="max-w-2xl mx-auto bg-base-100 p-8 rounded-xl shadow-lg">
                 <form onSubmit={handleSubmit} className="space-y-4">
@@ -47,7 +47,7 @@ const Profile: React.FC = () => {
                             name="name"
                             value={formData.name}
                             onChange={handleChange}
-                            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                            className="input input-bordered w-full mt-1"
                             required
                         />
                     </div>
@@ -58,7 +58,7 @@ const Profile: React.FC = () => {
                             name="username"
                             value={formData.username}
                             onChange={handleChange}
-                            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                            className="input input-bordered w-full mt-1"
                             required
                         />
                     </div>
@@ -69,7 +69,7 @@ const Profile: React.FC = () => {
                             name="password"
                             placeholder="••••••••"
                             onChange={handleChange}
-                            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                            className="input input-bordered w-full mt-1"
                         />
                     </div>
                     <div className="pt-4">
@@ -78,6 +78,11 @@ const Profile: React.FC = () => {
                         </button>
                     </div>
                 </form>
+                <div className="divider my-6"></div>
+                <button onClick={logout} className="btn btn-error btn-outline w-full">
+                    <Icon name="LogOut" size={16} className="mr-2" />
+                    Logout
+                </button>
             </div>
         </div>
     );
