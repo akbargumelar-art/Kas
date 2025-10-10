@@ -7,7 +7,7 @@ const BottomNav: React.FC = () => {
     const { activeView, setActiveView, currentUser, openTransactionForm } = useAppContext();
 
     const navItems = [
-        { view: 'dashboard', label: 'Ringkasan', icon: 'Home', roles: [Role.ADMIN, Role.VIEWER] },
+        { view: 'dashboard', label: 'Ringkasan', icon: 'LayoutDashboard', roles: [Role.ADMIN, Role.VIEWER] },
         { view: 'transactions', label: 'Transaksi', icon: 'BookOpen', roles: [Role.ADMIN, Role.VIEWER] },
         { view: 'add', label: '', icon: 'Plus', roles: [Role.ADMIN] },
         { view: 'management', label: 'Management', icon: 'Settings', roles: [Role.ADMIN] },
